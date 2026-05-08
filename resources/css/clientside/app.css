@@ -1,0 +1,153 @@
+/* -------- For Country Section ---------- */
+.country-badge {
+    min-width: 150px;
+    background-color: #fff;
+    transition: all 0.3s ease;
+    border-color: #eee !important;
+}
+
+.country-badge:hover {
+    border-color: var(--primarycolor) !important;
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05) !important;
+}
+
+.transition-hover {
+    cursor: default;
+}
+
+/* --------- For Rooms ------ */
+.roomcard {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    background: #fff;
+    overflow: hidden;
+}
+
+.roomcard:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1) !important;
+}
+
+.room-card-body h5 {
+    font-size: 22px;
+    letter-spacing: 1px;
+}
+
+.room-card-body a {
+    transition: color 0.3s;
+}
+
+.room-card-body a:hover {
+    color: var(--primarycolor) !important;
+}
+
+/* Fix for broken images in screenshot */
+.object-fit-cover {
+    object-fit: cover;
+    width: 100%;
+    height: 100%;
+}
+
+
+/* ------ Room Explore ------- */
+
+.hotel-card-horizontal {
+    height: 320px;
+    border: 1px solid #eee !important;
+
+    .object-fit-cover {
+        object-fit: cover;
+        width: 100%;
+        height: 100%;
+    }
+
+    &:hover {
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1) !important;
+    }
+}
+
+::-webkit-scrollbar {
+    width: 5px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #ccc;
+    border-radius: 10px;
+}
+
+/* --- Room Explore Filters side bar */
+
+.filter-sidebar {
+    position: sticky;
+    top: 90px;
+    max-height: calc(100vh - 120px);
+    max-width: 350px;
+    overflow-y: auto;
+}
+
+/* Hide scrollbar for clean look */
+.filter-sidebar::-webkit-scrollbar {
+    width: 4px;
+}
+
+.filter-sidebar::-webkit-scrollbar-thumb {
+    background: #e0e0e0;
+    border-radius: 10px;
+}
+
+
+/* ---- Button ---- */
+.btn-classic-dark {
+    background-color: #121212;
+    color: #fff;
+    border-radius: 0;
+    transition: 0.3s;
+}
+
+.btn-classic-dark:hover {
+    background-color: #333;
+    color: #fff;
+}
+
+
+/* Date */
+
+.modal.show.d-block {
+    display: block !important;
+    opacity: 1;
+    backdrop-filter: blur(4px);
+}
+
+/* cart drawer */
+
+#cartDrawer.offcanvas-bottom {
+    height: auto !important;
+    min-height: 120px;
+    background-color: #fff;
+    border-top: none;
+    box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.1);
+
+}
+
+#cartDrawer.offcanvas-bottom {
+    bottom: -20px;
+}
+
+@media (min-width: 768px) {
+    #cartDrawer {
+        width: 70% !important;
+        /* Screen ka 70% width lega */
+        left: 15% !important;
+        /* Dono side se 15-15% gap (Center alignment) */
+        margin-bottom: 20px;
+        /* Niche se thoda upar hawa mein */
+        border-radius: 20px !important;
+    }
+}
+
+@media (max-width: 767px) {
+    #cartDrawer {
+        width: 100% !important;
+        border-radius: 20px 20px 0 0 !important;
+    }
+}

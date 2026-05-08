@@ -1,0 +1,50 @@
+<?php
+
+return [
+    'name' => 'Name',
+    'description' => 'Description',
+    'address' => 'Address',
+    'city' => 'City',
+    'country' => 'Country',
+    'state' => 'State',
+    'pincode' => 'Pin Code',
+    'images' => 'Images',
+    'bookings' => 'Bookings of this Month',
+    'status' => 'Status',
+    'cancellation_charge' => 'Cancellation Charge',
+    'amenities' => 'Available Amenities',
+
+    'create_title' => 'Add New Hotel',
+    'create_button' => 'Submit form',
+    'list_title' => 'All Hotels',
+    'actions' => 'Actions',
+    'categories' => 'Categories',
+    'back_to_list' => 'Back to List',
+    'info' => 'Info',
+    'edit' => 'Edit',
+    'delete' => 'Delete',
+    'status_running' => 'Running',
+
+    
+    // 'search' => 'Seach Hotel',
+    'add_hotel' => 'Add New Hotel',
+    'add_first_hotel' => 'Add First Hotel',
+    'delete_confirm' => 'Are you sure to Delete Hotel',
+    'delete_confirm_btn' => 'Yes Delete',
+    'alert' => 'Alert',
+    'close' => 'Close',
+    'empty_msg' => 'There is no Hotel Listed Yet',
+    '' => '',
+
+    'placeholders' => [
+        'hotel_name' => 'Enter Hotel Name',
+        'desc_example' => 'e.g. Located in Center of City, Sea View Balcony',
+        'addr_example' => 'e.g. Opp Starbucks, 150ft Ring Road',
+        'city_example' => 'e.g. Delhi, Agra, Pune',
+        'pincode_example' => 'e.g. 450 001',
+        'select_city' => 'Select City',
+        'select_country' => 'Select Country',
+        'select_country_first' => 'Select Country First',
+        'search' => 'Seach Hotel',
+    ],
+];

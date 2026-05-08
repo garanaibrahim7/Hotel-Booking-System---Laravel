@@ -1,0 +1,104 @@
+POST http://localhost:8000/api/stripe/webhook HTTP/1.1
+content-type: application/json
+
+{
+  "type": "checkout.session.completed",
+  "data": {
+    "object": {
+      "id": "cs_test_b1Wz0Ipay9dDBvPILcme0bBXeYzEwQtF2Veu7JTAeFdPGx85vePYGCWhnU",
+      "payment_intent": "pi_test_456",
+      "metadata": {
+        "booking_id": 12
+      }
+    }
+  }
+}
+
+
+###
+
+GET http://localhost:8000/api/navlinks
+Accept: application/json
+Content-Type: application/json
+Authorization: Bearer 6|jgUxyBnYwjiPMTB4Zpkku9JFgF2a188ZDF5pAd0B7d18885f
+
+
+
+###
+
+GET http://localhost:8000/api/user
+Accept: application/json
+Content-Type: application/json
+Authorization: Bearer 3|rC1VKo8xk8ePBrCGLaURbvx3S9HNXMsnoPxp1ptoe0c7f1d6
+
+###
+
+POST http://localhost:8000/api/logout
+Accept: application/json
+Content-Type: application/json
+Authorization: Bearer 3|rC1VKo8xk8ePBrCGLaURbvx3S9HNXMsnoPxp1ptoe0c7f1d6
+
+
+###
+
+GET http://localhost:8000/api/rooms?city_id=27&check_in=2026-05-03&check_out=2026-05-05&page=1
+Accept: application/json
+Content-Type: application/json
+
+###
+Authorization: Bearer 3|rC1VKo8xk8ePBrCGLaURbvx3S9HNXMsnoPxp1ptoe0c7f1d6
+
+GET http://localhost:8000/api/bookings
+Accept: application/json
+Content-Type: application/json
+Authorization: Bearer 4|CYXCqoaXl5crgnFhlcAVes8krrxlWWFOiSYvW9xc77359fb9
+
+###
+
+GET http://localhost:8000/api/booking/20
+Accept: application/json
+Content-Type: application/json
+Authorization: Bearer 4|CYXCqoaXl5crgnFhlcAVes8krrxlWWFOiSYvW9xc77359fb9
+
+
+###
+POST http://localhost:8000/api/book HTTP/1.1
+Accept: application/json
+Content-Type: application/json
+Authorization: Bearer 4|CYXCqoaXl5crgnFhlcAVes8krrxlWWFOiSYvW9xc77359fb9
+
+{
+    "check_in": "2026-05-10",
+    "check_out": "2026-05-15",
+    "coupon_code": "LIMITED OFFER",
+    "name": "John Doe",
+    "email": "john@example.com",
+    "phone": "9876543210",
+    "instructions": "High floor preferred",
+    "room_requirements": [
+        "1:2",
+        "5:1"
+    ]
+}
+
+###
+POST http://localhost:8000/api/booking/cancel HTTP/1.1
+Accept: application/json
+Content-Type: application/json
+Authorization: Bearer 4|CYXCqoaXl5crgnFhlcAVes8krrxlWWFOiSYvW9xc77359fb9
+
+{
+    "booking_id" : 20,
+    "cancellation_reason": "Bas ese hi, ab Man nhi he"
+}
+
+
+###
+POST http://localhost:8000/api/login HTTP/1.1
+Accept: application/json
+Content-Type: application/json
+
+{
+    "email": "ibrahim.g@techxperts.co.in",
+    "password": "123456"
+}

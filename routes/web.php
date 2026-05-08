@@ -24,17 +24,15 @@ use App\Jobs\CreateTransactionJob;
 use App\Models\Booking;
 use App\Models\City;
 use App\Models\Refund;
-use App\Models\Transaction;
 use App\Services\Payments\StripeProvider;
-use App\Services\TransactionService;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
 use Stripe\StripeClient;
 
-Route::get('/', function () {
-    return view('welcome');
-});
+// Route::get('/', function () {
+//     return view('welcome');
+// });
 
 Route::view('/login', 'client.auth.login')->middleware('guest')->name('login');
 Route::post('/login', LoginController::class)->middleware('guest')->name('login');
@@ -163,13 +161,11 @@ Route::prefix('admin')
     ->group(function () {
         Route::get('/', [AdminDashboardController::class, 'index'])->name('dashboard');
 
-        //booking chart
-        Route::get('/booking-chart-data', [AdminDashboardController::class,'bookingChartData'])->name('booking-chart');
-        Route::get('/financial-chart-data', [AdminDashboardController::class,'financialChartData'])->name('financial-chart');
+        // booking chart
+        Route::get('/booking-chart-data', [AdminDashboardController::class, 'bookingChartData'])->name('booking-chart');
+        Route::get('/financial-chart-data', [AdminDashboardController::class, 'financialChartData'])->name('financial-chart');
 
-        Route::get('/calendar-data', [RoomController::class,'getCalendarData'])->name('calendar-data');
-
-
+        Route::get('/calendar-data', [RoomController::class, 'getCalendarData'])->name('calendar-data');
 
         Route::get('/bookings/report', [BookingController::class, 'report'])->name('bookings.report');
         Route::get('/bookings/print', [BookingController::class, 'printList'])->name('bookings.print');

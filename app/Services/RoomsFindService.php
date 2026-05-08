@@ -137,7 +137,10 @@ class RoomsFindService
                     'coupon_code' => $applicableDiscount?->coupen_code ?? null,
                     'offer_type' => $discountType,
                     'user_currency_symbol' => $userLocation['currency_symbol'],
-                    'images' => $room->images,
+                    'images' => $room->images->map(function($image){
+                        $image->path = url('/').'/storage/'.$image->path;
+                        return $image;
+                    }),
                     'hotel_id' => $room->hotel_id,
                 ];
             });

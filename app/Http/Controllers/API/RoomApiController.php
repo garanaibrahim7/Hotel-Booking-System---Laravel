@@ -16,7 +16,7 @@ class RoomApiController extends Controller
 
     public function index(Request $request)
     {
-
+        sleep(1);
         $userCountry = LocationService::fetchLocation();
 
         $request->validate([

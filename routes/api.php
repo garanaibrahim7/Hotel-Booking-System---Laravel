@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\API\AuthController;
 use App\Http\Controllers\API\BookingApiController;
+use App\Http\Controllers\API\HomeApiController;
 use App\Http\Controllers\API\RoomApiController;
 use App\Http\Controllers\PaymentWebhookController;
 use Illuminate\Http\Request;
@@ -50,3 +51,8 @@ Route::get('/rooms', [RoomApiController::class, 'index']);
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/logout', [AuthController::class, 'logout']);
+
+Route::get('/home/special-offers', [HomeApiController::class, 'getSpecialOffers']);
+Route::get('/home/featured-rooms', [HomeApiController::class, 'getFeaturedRooms']);
+Route::get('/home/search-cities', [HomeApiController::class, 'getSearchCities']);
+Route::get('/home/hotel-cities', [HomeApiController::class, 'getHotelCities']);

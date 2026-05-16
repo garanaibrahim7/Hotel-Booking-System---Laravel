@@ -104,6 +104,6 @@
         .form-check-input:checked {
             background-color: #bca47f;
             border-color: #bca47f;
-        }
+        }   
     </style>
 @endpush

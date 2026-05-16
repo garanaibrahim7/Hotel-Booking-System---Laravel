@@ -45,6 +45,19 @@ class RoomApiController extends Controller
         // Log::channel('debug')->info();
         $message = $paginatedHotels->isEmpty() ? 'No Rooms Found for the Request' : 'Rooms Fetched Successfully';
 
+        return RoomExploreResource::collection($paginatedHotels)->additional([
+             'meta' => [
+                'total' => $paginatedHotels->total(),
+                'current_page' => $paginatedHotels->currentPage(),
+                'per_page' => $paginatedHotels->perPage(),
+                'last_page' => $paginatedHotels->lastPage(),
+            ],
+            'filters' => [
+                'types' => ['Single', 'Double', 'Family', 'Twin'],
+                'categories' => ['Standard', 'Suite', 'Deluxe', 'Premium', 'Luxury'],
+            ],
+        ])->response()->setStatusCode(200);
+        
         return $this->success([
             'meta' => [
                 'total' => $paginatedHotels->total(),

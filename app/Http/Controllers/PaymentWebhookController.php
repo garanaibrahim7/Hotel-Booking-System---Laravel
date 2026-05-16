@@ -27,6 +27,7 @@ class PaymentWebhookController extends Controller
 
         $status = match ($event->type) {
             'checkout.session.completed' => 1,
+            'payment_intent.succeeded' => 1,
             'payment_intent.payment_failed' => 2,
             'payment_intent.processing' => 3,
             'checkout.session.expired' => 4,

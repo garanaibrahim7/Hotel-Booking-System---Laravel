@@ -44,14 +44,15 @@ Authorization: Bearer 3|rC1VKo8xk8ePBrCGLaURbvx3S9HNXMsnoPxp1ptoe0c7f1d6
 GET http://localhost:8000/api/rooms?city_id=27&check_in=2026-06-03&check_out=2026-06-05&page=1
 Accept: application/json
 Content-Type: application/json
+
 ###
 
-GET http://localhost:8000/api/rooms
+GET http://localhost:8000/api/rooms?hotel_id=5
 Accept: application/json
 Content-Type: application/json
 
 ###
-Authorization: Bearer 3|rC1VKo8xk8ePBrCGLaURbvx3S9HNXMsnoPxp1ptoe0c7f1d6
+
 
 GET http://localhost:8000/api/bookings
 Accept: application/json

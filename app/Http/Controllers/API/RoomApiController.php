@@ -21,6 +21,7 @@ class RoomApiController extends Controller
 
         $request->validate([
             'city_id' => 'nullable|integer',
+            'hotel_id' => 'nullable|integer',
             'check_in' => 'nullable|date|after_or_equal:today',
             'check_out' => 'nullable|date|after:check_in',
             'adults' => 'nullable|integer|min:1',
@@ -33,7 +34,7 @@ class RoomApiController extends Controller
         $paginatedHotels = RoomsFindService::loadAvailableRoomsPaginate(
             $request->filled('check_in') ? $request->check_in : today(),
             $request->filled('check_out') ? $request->check_out : today()->addDay(),
-            null,
+            $request->hotel_id ?? null,
             $request->city_id ?? null,
             $userCountry,
             $request->adults ?? 1,
@@ -57,7 +58,7 @@ class RoomApiController extends Controller
                 'categories' => ['Standard', 'Suite', 'Deluxe', 'Premium', 'Luxury'],
             ],
         ])->response()->setStatusCode(200);
-        
+
         return $this->success([
             'meta' => [
                 'total' => $paginatedHotels->total(),

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\RoomExploreResource;
+use App\Models\City;
 use App\Services\LocationService;
 use App\Services\RoomsFindService;
 use App\Traits\HttpResponses;
@@ -16,7 +17,7 @@ class RoomApiController extends Controller
 
     public function index(Request $request)
     {
-        sleep(1);
+        // sleep(2);
         $userCountry = LocationService::fetchLocation();
 
         $request->validate([
@@ -29,11 +30,14 @@ class RoomApiController extends Controller
         ]);
 
         $page = $request->page ?? 1;
-        $perPage = 10;
+        $perPage = 15;
+
+        $checkIn = $request->filled('check_in') ? $request->check_in : session('booking_check_in', today());
+        $checkOut = $request->filled('check_out') ? $request->check_out : session('booking_check_out', today()->addDay());
 
         $paginatedHotels = RoomsFindService::loadAvailableRoomsPaginate(
-            $request->filled('check_in') ? $request->check_in : today(),
-            $request->filled('check_out') ? $request->check_out : today()->addDay(),
+            $checkIn,
+            $checkOut,
             $request->hotel_id ?? null,
             $request->city_id ?? null,
             $userCountry,
@@ -43,19 +47,32 @@ class RoomApiController extends Controller
             $perPage
         );
 
-        // Log::channel('debug')->info();
+        // Log::channel('debug')->info('Total : '.$paginatedHotels->total());
         $message = $paginatedHotels->isEmpty() ? 'No Rooms Found for the Request' : 'Rooms Fetched Successfully';
 
         return RoomExploreResource::collection($paginatedHotels)->additional([
-             'meta' => [
-                'total' => $paginatedHotels->total(),
-                'current_page' => $paginatedHotels->currentPage(),
-                'per_page' => $paginatedHotels->perPage(),
-                'last_page' => $paginatedHotels->lastPage(),
-            ],
+            // 'meta' => [
+            //     'total' => $paginatedHotels->total(),
+            //     'current_page' => $paginatedHotels->currentPage(),
+            //     'per_page' => $paginatedHotels->perPage(),
+            //     'last_page' => $paginatedHotels->lastPage(),
+            // ],
+            'selected' => $request->city_id ? $paginatedHotels->first()->hotel->city_name : $userCountry['country_name'],
+            'check_in' => $checkIn,
+            'check_out' => $checkOut,
             'filters' => [
                 'types' => ['Single', 'Double', 'Family', 'Twin'],
                 'categories' => ['Standard', 'Suite', 'Deluxe', 'Premium', 'Luxury'],
+                'cities' => City::get()->map(function ($city) {
+                    return (object) [
+                        'id' => $city->id,
+                        'full_name' => "{$city->location_details->city} - {$city->location_details->state} ({$city->location_details->country})",
+                    ];
+                }),
+                'values' => [
+                    'check_in' => $checkIn,
+                    'check_out' => $checkOut,
+                ]
             ],
         ])->response()->setStatusCode(200);
 

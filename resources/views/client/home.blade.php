@@ -278,17 +278,14 @@
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const swiper = new Swiper('.featuredRoomsSwiper', {
-                // Infinite loop
                 loop: true,
 
-                // Auto play
                 autoplay: {
                     delay: 3000,
                     disableOnInteraction: false, // Keeps autoplay running after manual swipe
                     pauseOnMouseEnter: true, // Stops when user hovers
                 },
 
-                // Responsive breakpoints
                 slidesPerView: 1,
                 spaceBetween: 20,
                 breakpoints: {
@@ -300,7 +297,6 @@
                     },
                 },
 
-                // Optional pagination dots
                 pagination: {
                     el: '.swiper-pagination',
                     clickable: true,

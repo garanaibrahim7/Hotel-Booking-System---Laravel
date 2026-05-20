@@ -54,7 +54,7 @@ class RoomExploreResource extends JsonResource
                     'path' => $image->path,
                 ]),
             ]),
-            'offer' => [
+            'offer' => $this->offer ?[
                 'id' => $this->offer->id,
                 'coupen_code' => $this->offer->coupen_code,
                 'type' => $this->offer->type,
@@ -71,7 +71,7 @@ class RoomExploreResource extends JsonResource
                 'max_discount' => $this->offer->max_discount,
                 'hotel_id' => $this->offer->hotel_id,
                 'country_id' => $this->offer->country_id,
-            ],
+            ] : [],
         ];
     }
 }

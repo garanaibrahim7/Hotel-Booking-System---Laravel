@@ -4,7 +4,11 @@ namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
 use App\Models\Booking;
+use App\Models\Discount;
 use App\Services\CheckoutService;
+use App\Services\DiscountCoupenService;
+use App\Services\LocationService;
+use App\Services\RoomsFindService;
 use App\Traits\HttpResponses;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -79,6 +83,206 @@ class BookingApiController extends Controller
                 'last_page' => $bookings->lastPage(),
             ],
         ], $message);
+    }
+
+    public function checkout()
+    {
+        $stay = session()->get('stay', []);
+
+        if (empty($stay) || empty($stay['items'])) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Your room selection is completely empty!',
+            ], 400);
+        }
+
+        $checkIn = session('booking_check_in');
+        $checkOut = session('booking_check_out');
+
+        if (! $checkIn || ! $checkOut) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Required stay duration parameters are missing from session cache.',
+            ], 422);
+        }
+
+        $roomRequirements = array_map(fn ($item) => [
+            'id' => $item['id'],
+            'quantity' => $item['quantity'],
+        ], $stay['items']);
+
+        $availabilityData = RoomsFindService::loadRequiredRooms($roomRequirements, $checkIn, $checkOut);
+
+        if ($availabilityData->isEmpty()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Selected rooms are no longer available for your chosen dates.',
+            ], 410);
+        }
+
+        $availableRooms = $availabilityData['rooms'];
+        $hotel = $availabilityData['hotel'];
+        $nights = Carbon::parse($checkIn)->diffInDays($checkOut) ?: 1;
+
+        $userCountry = LocationService::fetchLocation();
+        $hotelCountry = $hotel->city->state->country;
+
+        $exchangeRate = 1;
+        if ($userCountry['currency_code'] != $hotelCountry->currency_code) {
+            $exchangeRate = convertCurrency(1, $userCountry['currency_code'], $hotelCountry->currency_code);
+        }
+
+        $rawTotal = $availableRooms->sum('details.price') * $nights;
+        $coupon_code = null;
+
+        if (isset($stay['discount_id'])) {
+            $discount = Discount::find($stay['discount_id']);
+            if ($discount && $discount->active_status) {
+                $coupon_code = $discount->coupen_code;
+            }
+        }
+
+        if ($coupon_code) {
+            $validatedDiscount = DiscountCoupenService::validateCoupen(
+                $rawTotal,
+                $coupon_code,
+                $nights,
+                $hotel->id,
+                $userCountry['country_id'],
+                $exchangeRate
+            );
+
+            if (isset($validatedDiscount['error'])) {
+                return response()->json([
+                    'success' => false,
+                    'message' => $validatedDiscount['error'],
+                ], 422);
+            }
+        } else {
+            $validatedDiscount = [
+                'coupon_id' => null,
+                'coupon_code' => null,
+                'discount_amount' => 0,
+                'final_amount' => round($rawTotal, 2),
+                'final_converted_amount' => round($rawTotal * $exchangeRate, 2),
+            ];
+        }
+
+        $checkoutPayload = [
+            'checkIn' => $checkIn,
+            'checkOut' => $checkOut,
+            'nights' => $nights,
+            'currency_symbol' => $userCountry['currency_symbol'],
+            'hotelCurrencySymbol' => $hotelCountry->currency_symbol,
+            'country_id' => $hotelCountry->id,
+            'userCountryId' => $userCountry['country_id'],
+            'converted' => $userCountry['currency_code'] != $hotelCountry->currency_code,
+            'user' => Auth::guard('sanctum')->user() ? [
+                'name' => Auth::guard('sanctum')->user()->name,
+                'email' => Auth::guard('sanctum')->user()->email,
+                'phone' => Auth::guard('sanctum')->user()->phone,
+            ] : null,
+
+            'hotel' => [
+                'id' => $hotel->id,
+                'name' => $hotel->name,
+                'city' => $hotel->city->name,
+                'state' => $hotel->city->state->name,
+                'address' => $hotel->address,
+                'pincode' => $hotel->pincode,
+            ],
+
+            'rooms' => $availableRooms->map(function ($room) use ($exchangeRate) {
+                return [
+                    'id' => $room->details->id,
+                    'title' => $room->details->title,
+                    'path' => $room->details->images->first()->path ?? 'default.jpg',
+                    'price' => round($room->details->price * $exchangeRate, 2),
+                ];
+            })->values()->all(),
+
+            'finalActualTotal' => $rawTotal,
+            'subTotal' => round($rawTotal * $exchangeRate, 2),
+            'finalTotal' => $validatedDiscount['final_converted_amount'],
+            'discountId' => $validatedDiscount['coupon_id'] ?? null,
+            'discountCode' => $validatedDiscount['coupon_code'] ?? null,
+            'discountAmount' => round($validatedDiscount['discount_amount'] * $exchangeRate, 2) ?? null,
+        ];
+
+        session()->put('checkoutPayload', $checkoutPayload);
+        // sleep(2);
+
+        return response()->json([
+            'success' => true,
+            'coupon_code' => $coupon_code,
+            'data' => $checkoutPayload,
+        ], 200);
+
+    }
+
+    public function applyCoupon(Request $request)
+    {
+        $couponCode = $request->couponCode;
+        $totalAmount = $request->totalAmount;
+        $nights = $request->nights;
+        $hotelId = $request->hotelId;
+
+        $userCountry = LocationService::fetchLocation();
+        $userCountryId = $userCountry['country_id'];
+
+        $validatedCouponDetails = DiscountCoupenService::validateCoupen($totalAmount, $couponCode, $nights, $hotelId, $userCountryId);
+
+        if (isset($validatedCouponDetails['error'])) {
+            return response()->json($validatedCouponDetails);
+        }
+        if ($validatedCouponDetails['status']) {
+            $checkoutPayload = session()->get('checkoutPayload');
+
+            $stay = session()->get('stay');
+
+            if ($stay) {
+                $stay['discount_id'] = $validatedCouponDetails['coupon_id'];
+                $stay['offer_message'] = 'Coupon Applied : '.$validatedCouponDetails['coupon_code'];
+
+                session()->put('stay', $stay);
+                session()->put('changedStay', true);
+            }
+
+            return response()->json([
+                'status' => 'success',
+                'data' => $validatedCouponDetails,
+            ]
+            );
+        }
+
+        return response()->json([
+            'status' => 'error',
+            'message' => 'Some Services are Not Working at Moment']
+        );
+    }
+
+    public function removeCoupon()
+    {
+        $stay = session()->get('stay', []);
+        if ($stay) {
+            unset($stay['discount_id']);
+            unset($stay['offer_message']);
+
+            session()->put('stay', $stay);
+            session()->put('changedStay', true);
+        }
+
+        $checkoutPayload = session()->get('checkoutPayload');
+        if ($checkoutPayload) {
+            unset($checkoutPayload['discountId']);
+            unset($checkoutPayload['discountCode']);
+            unset($checkoutPayload['discountAmount']);
+            $checkoutPayload['finalTotal'] = $checkoutPayload['subTotal'];
+
+            session()->put('checkoutPayload', $checkoutPayload);
+        }
+
+        return response()->json(['status' => true, 'message' => 'Coupon Removed Successfully']);
     }
 
     public function store(Request $request)

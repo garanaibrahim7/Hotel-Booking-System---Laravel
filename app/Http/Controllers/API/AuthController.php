@@ -55,10 +55,13 @@ class AuthController extends Controller
 
         $user = User::where('email', $request->email)->first();
 
-        return $this->success([
-            'user' => $user,
-            'token' => $user->createToken('API Token')->plainTextToken,
-        ], 'Logged in successfully');
+        return response()->json([
+            'status' => true,
+            'data' => [
+                'user' => $user,
+                'token' => $user->createToken('API Token')->plainTextToken,
+            ],
+        ], 200);
     }
 
     public function logout(Request $request)
@@ -68,9 +71,15 @@ class AuthController extends Controller
         if ($user && $user->currentAccessToken()) {
             $user->currentAccessToken()->delete();
 
-            return $this->success(null, 'Logged out successfully');
+            return response()->json([
+                'status' => true,
+                'message' => 'Logged out successfully',
+            ], 200);
         }
 
-        return $this->error(null, 'No active session found', 401);
+        return response()->json([
+            'status' => false,
+            'message' => 'No active session found',
+        ], 401);
     }
 }

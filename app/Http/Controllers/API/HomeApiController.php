@@ -55,6 +55,13 @@ class HomeApiController extends Controller
         ], 200);
     }
 
+    public function heroImage() {
+        return response()->json([
+            'success' => true,
+            'data' => asset('/storage/assets/banner.jpg'),
+        ], 200);
+    }
+
     public function index()
     {
         $userCountry = LocationService::fetchLocation();
@@ -102,6 +109,7 @@ class HomeApiController extends Controller
         return response()->json([
             'success' => true,
             'data' => [
+                'banner_image' => asset('/storage/assets/banner.jpg'),
                 'user_country' => $userCountry,
                 'featured_rooms' => $featuredRooms,
                 'local_special_rooms' => $localSpecialRooms,

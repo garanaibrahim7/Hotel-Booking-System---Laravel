@@ -108,6 +108,11 @@
                                                     </button>
                                                 </form>
 
+                                                {{-- <a href='{{ route('admin.discounts.edit', $discount->id) }}'
+                                                    class="btn btn-white btn-sm px-3" title="Show Usage">
+                                                    <i class="bi bi-pencil-square text-warning"></i>
+                                                </a> --}}
+
                                                 @if ($isActive)
                                                     <button type="button" class="btn btn-white btn-sm px-3"
                                                         onclick="triggerBookingModal(

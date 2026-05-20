@@ -26,6 +26,8 @@ class RoomsFindService
             $query->where('hotel_id', $hotelId);
         } elseif ($cityId) {
             $query->whereHas('hotel', fn ($q) => $q->where('city_id', $cityId));
+        } else {
+            $query->whereHas('hotel.city.state.country', fn ($q) => $q->where('name', $userLocation['country_name']));
         }
 
         if ($adults) {
@@ -37,6 +39,9 @@ class RoomsFindService
         }
 
         if ($checkIn && $checkOut) {
+            session()->put('booking_check_in', $checkIn);
+            session()->put('booking_check_out', $checkOut);
+
             $query->whereHas('rooms', function ($q) use ($checkIn, $checkOut) {
                 $q->where('status', 1)
                     ->whereDoesntHave('bookingItems', function ($bi) use ($checkIn, $checkOut) {
@@ -85,6 +90,7 @@ class RoomsFindService
 
             // Process only the rooms that made it onto this page
             $roomsPayload = $roomsForThisHotel->map(function ($room) use ($exchangeRate, $discounts, $userLocation, &$applicableDiscount) {
+                $discountValue = 0;
                 $baseConvertedPrice = round($room->price * $exchangeRate, 2);
                 $offerPrice = null;
                 $discountType = null;
@@ -137,8 +143,9 @@ class RoomsFindService
                     'coupon_code' => $applicableDiscount?->coupen_code ?? null,
                     'offer_type' => $discountType,
                     'user_currency_symbol' => $userLocation['currency_symbol'],
-                    'images' => $room->images->map(function($image){
+                    'images' => $room->images->map(function ($image) {
                         $image->path = url('/').'/storage/'.$image->path;
+
                         return $image;
                     }),
                     'hotel_id' => $room->hotel_id,

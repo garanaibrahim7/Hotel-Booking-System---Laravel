@@ -25,6 +25,7 @@
             <form action="{{ route('admin.discounts.update', $discount->id) }}" method="POST">
                 @csrf
                 @method('PUT')
+                {{-- {{ route('admin.discounts.update', $discount->id) }} --}}
                 <input type="hidden" name="required_code" value="{{ $discount->required_code }}">
 
                 <div class="card-body px-4">
@@ -48,7 +49,7 @@
                                         {{ $discount->active_status == 1 ? 'Active' : 'Inactive' }}
                                     </span>
                                     <input type="hidden" name="active_status" value="0">
-                                    <input class="form-check-input ms-0" type="checkbox" name="active_status" value="1" 
+                                    <input class="form-check-input ms-0" type="checkbox" name="active_status" value="1"
                                            id="statusSwitch" style="width: 2.5em; height: 1.25em; cursor: pointer;"
                                            {{ old('active_status', $discount->active_status) == 1 ? 'checked' : '' }}
                                            onchange="document.getElementById('status_label').innerText = this.checked ? 'Active' : 'Inactive'">

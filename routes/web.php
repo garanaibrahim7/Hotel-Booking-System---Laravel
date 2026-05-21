@@ -1,5 +1,6 @@
 <?php
 
+use App\Events\BroadcastBookingStatus;
 use App\Http\Controllers\AdminDashboardController;
 use App\Http\Controllers\BookingController;
 use App\Http\Controllers\CartController;
@@ -20,11 +21,8 @@ use App\Http\Controllers\User\UserHotelController;
 use App\Http\Controllers\User\UserProfileController;
 use App\Http\Controllers\User\UserRoomController;
 use App\Http\Controllers\UserController;
-use App\Jobs\CreateTransactionJob;
 use App\Models\Booking;
 use App\Models\City;
-use App\Models\Refund;
-use App\Services\Payments\StripeProvider;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
@@ -57,83 +55,15 @@ Route::get('/trunc', function () {
 
 Route::get('/test/{intent}', function ($intent) {
 
-    for ($i = 81; $i <= 83; $i++) {
+    $booking = Booking::find($intent);
 
-        $booking = Booking::findOrFail($i);
-        CreateTransactionJob::dispatch([
-            'transactionable_id' => $booking->id,
-            'transactionable_type' => Booking::class,
-            'amount' => (float) $booking->payment->amount,
-            'converted_amount' => (float) $booking->payment->converted_amount,
-            'currency' => $booking->payment->currency,
-            'converted_currency' => $booking->payment->paid_currency,
-            'exchange_rate' => (float) $booking->payment->exchange_rate,
-            'type' => 'credit',
-            'mode' => $booking->payment->gateway,
-            'note' => 'New Booking',
-            'tax' => 0,
-            'tax_amount' => 0,
-        ]);
+    if (! $booking) {
+        return 'Error: Please pass a valid existing booking ID in the URL! Example: /api/test-websocket-trigger/1';
     }
 
-    // return 'Done...';
+    event(new BroadcastBookingStatus($booking, true, '🚀 Success! Broadcast fired into channel: booking-tracker.'.$intent));
 
-    $refund = Refund::findOrFail(17);
-
-    CreateTransactionJob::dispatch([
-        'transactionable_id' => $refund->id,
-        'transactionable_type' => Refund::class,
-        'amount' => (float) $refund->payment->amount,
-        'converted_amount' => (float) $refund->payment->converted_amount,
-        'currency' => $refund->payment->currency,
-        'converted_currency' => $refund->payment->paid_currency,
-        'exchange_rate' => (float) $refund->payment->exchange_rate,
-        'type' => 'debit',
-        'mode' => $refund->payment->gateway,
-        'note' => 'New Booking',
-        'tax' => 0,
-        'tax_amount' => 0,
-    ]);
-
-    $booking = Booking::findOrFail(84);
-    CreateTransactionJob::dispatch([
-        'transactionable_id' => $booking->id,
-        'transactionable_type' => Booking::class,
-        'amount' => (float) $booking->payment->amount,
-        'converted_amount' => (float) $booking->payment->converted_amount,
-        'currency' => $booking->payment->currency,
-        'converted_currency' => $booking->payment->paid_currency,
-        'exchange_rate' => (float) $booking->payment->exchange_rate,
-        'type' => 'credit',
-        'mode' => $booking->payment->gateway,
-        'note' => 'New Booking',
-        'tax' => 0,
-        'tax_amount' => 0,
-    ]);
-
-    return 'Done....';
-
-    return [
-        'transactionable_id' => $booking->id,
-        'transactionable_type' => Booking::class,
-        'amount' => (int) $booking->payment->amount,
-        'converted_amount' => (int) $booking->payment->converted_amount,
-        'currency' => $booking->payment->currency,
-        'converted_currency' => $booking->payment->paid_currency,
-        'exchange_rate' => $booking->payment->exchange_rate,
-        'type' => 'credit',
-        'mode' => $booking->payment->gateway,
-        'note' => 'New Booking',
-        'tax' => 0,
-        'tax_amount' => 0,
-    ];
-
-    $obj = new StripeProvider;
-    $response = $obj->refund(10, $intent);
-    // Log::channel('debug')->info('Response after Refund : ', $response);
-    Log::channel('debug')->info('Refund ID : '.$response['data']['refund_id']);
-
-    return $response;
+    return '🚀 Success! Broadcast fired into channel: booking-tracker.'.$intent;
 
 })->name('test');
 

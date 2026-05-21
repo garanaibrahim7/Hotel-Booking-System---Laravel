@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Contracts\PaymentProviderInterface;
+use App\Events\BroadcastBookingStatus;
 use App\Jobs\CreateTransactionJob;
 use App\Models\Booking;
 use App\Models\Discount;
@@ -77,11 +78,17 @@ class PaymentService
                         'tax_amount' => 0,
                     ]);
 
+                    event(new BroadcastBookingStatus(
+                    $booking,
+                    true,
+                    'Payment captured successfully!'
+                ));
+
                     Cache::forget('rooms_city_'.($booking->hotel->city_id ?? 'all'));
-                    // session()->forget('checkoutPayload');
-                    // session()->forget('changedStay');
-                    // session()->forget('stay');
-                    // session()->forget('booking_hotel_id');
+                    session()->forget('checkoutPayload');
+                    session()->forget('changedStay');
+                    session()->forget('stay');
+                    session()->forget('booking_hotel_id');
 
                     $user = $booking->user;
                     $user->notify(new BookingConfirmNotification($booking));

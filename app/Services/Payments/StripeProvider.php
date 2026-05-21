@@ -49,6 +49,7 @@ class StripeProvider implements PaymentProviderInterface
                     ...$bookingDetails['metadata'],
                     'booking_id' => $bookingDetails['booking_id'],
                 ],
+                
                 'success_url' => $bookingDetails['success_url'].'?session_id={CHECKOUT_SESSION_ID}',
                 'cancel_url' => $bookingDetails['cancel_url'].'?session_id={CHECKOUT_SESSION_ID}',
                 'expires_at' => time() + (30 * 60),

@@ -222,6 +222,7 @@ class BookingApiController extends Controller
 
     public function applyCoupon(Request $request)
     {
+        // sleep(2);
         $couponCode = $request->couponCode;
         $totalAmount = $request->totalAmount;
         $nights = $request->nights;
@@ -272,6 +273,7 @@ class BookingApiController extends Controller
             session()->put('changedStay', true);
         }
 
+
         $checkoutPayload = session()->get('checkoutPayload');
         if ($checkoutPayload) {
             unset($checkoutPayload['discountId']);
@@ -282,7 +284,13 @@ class BookingApiController extends Controller
             session()->put('checkoutPayload', $checkoutPayload);
         }
 
-        return response()->json(['status' => true, 'message' => 'Coupon Removed Successfully']);
+        return response()->json([
+            'status' => true,
+            'message' => 'Coupon Removed Successfully',
+            'data' => [
+                'finalTotal' => $checkoutPayload['subTotal'] ?? null,
+            ],
+        ]);
     }
 
     public function store(Request $request)
@@ -313,9 +321,14 @@ class BookingApiController extends Controller
             return $this->error(null, $paymentData['error'], 422);
         }
 
-        return $this->success([
-            'payment_url' => $paymentData['url'],
-        ], 'Booking initiated successfully.');
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Payment Initialized Successfully',
+            'data' => [
+                'payment_url' => $paymentData['url'],
+                'session_id' => $paymentData['session_id'],
+            ],
+        ]);
     }
 
     public function cancelBooking(Request $request)

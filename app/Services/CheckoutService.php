@@ -148,6 +148,9 @@ class CheckoutService
                 'discount_amount' => ($discountData['discount_amount'] ?? 0) * $exchangeRate ?? 0,
                 'success_url' => route('booking.success'),
                 'cancel_url' => route('booking.cancelPayment'),
+
+                // 'success_url' => request()->is('api/*') ? null : route('booking.success'),
+                // 'cancel_url' => request()->is('api/*') ? null : route('booking.cancelPayment'),
             ];
 
             // Log::channel('debug')->info('Payload to Create Session : ', $payload);

@@ -273,7 +273,6 @@ class BookingApiController extends Controller
             session()->put('changedStay', true);
         }
 
-
         $checkoutPayload = session()->get('checkoutPayload');
         if ($checkoutPayload) {
             unset($checkoutPayload['discountId']);
@@ -325,6 +324,7 @@ class BookingApiController extends Controller
             'status' => 'success',
             'message' => 'Payment Initialized Successfully',
             'data' => [
+                'booking_id' => $paymentData['booking_id'],
                 'payment_url' => $paymentData['url'],
                 'session_id' => $paymentData['session_id'],
             ],

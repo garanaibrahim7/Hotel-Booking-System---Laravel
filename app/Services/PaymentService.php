@@ -29,6 +29,7 @@ class PaymentService
         // Log::channel('debug')->info('Payment Data at Payment Service Class : ', $paymentData);
         return [
             'session_id' => $paymentData['session_id'],
+            'booking_id' => $payload['booking_id'],
             'url' => $paymentData['url'],
             'gateway' => $this->paymentProvider->getProviderName(),
             'currency' => strtoupper($payload['currency']),
@@ -79,10 +80,10 @@ class PaymentService
                     ]);
 
                     event(new BroadcastBookingStatus(
-                    $booking,
-                    true,
-                    'Payment captured successfully!'
-                ));
+                        $booking,
+                        true,
+                        'Payment captured successfully!'
+                    ));
 
                     Cache::forget('rooms_city_'.($booking->hotel->city_id ?? 'all'));
                     session()->forget('checkoutPayload');
@@ -179,7 +180,6 @@ class PaymentService
                             // 'refund_id' => $paymentIntentId,
                         ]);
                     }
-
 
                     CreateTransactionJob::dispatch([
                         'transactionable_id' => $refund->id,

@@ -61,7 +61,7 @@ Route::get('/test/{intent}', function ($intent) {
         return 'Error: Please pass a valid existing booking ID in the URL! Example: /api/test-websocket-trigger/1';
     }
 
-    event(new BroadcastBookingStatus($booking, true, '🚀 Success! Broadcast fired into channel: booking-tracker.'.$intent));
+    event(new BroadcastBookingStatus($booking, true, '🚀 Success! Broadcast fired Again into channel: booking-tracker.'.$intent));
 
     return '🚀 Success! Broadcast fired into channel: booking-tracker.'.$intent;
 

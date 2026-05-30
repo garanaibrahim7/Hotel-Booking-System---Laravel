@@ -53,13 +53,15 @@ class AuthController extends Controller
             return $this->error(null, 'Credentials do not match', 401);
         }
 
-        $user = User::where('email', $request->email)->first();
+        // $user = User::where('email', $request->email)->first();
+        $user = Auth::user();
+        Auth::login($user, true);
 
         return response()->json([
             'status' => true,
             'data' => [
                 'user' => $user,
-                'token' => $user->createToken('API Token')->plainTextToken,
+                // 'token' => $user->createToken('API Token')->accessToken,
             ],
         ], 200);
     }

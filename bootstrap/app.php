@@ -2,13 +2,12 @@
 
 use App\Http\Middleware\AdminAuth;
 use App\Http\Middleware\ManagerAuth;
-use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
-use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
-use Illuminate\Http\Middleware\HandleCors;
-use Illuminate\Session\Middleware\StartSession;
+use Laravel\Passport\Http\Middleware\CheckToken;
+use Laravel\Passport\Http\Middleware\CheckTokenForAnyScope;
+use Laravel\Passport\Http\Middleware\CreateFreshApiToken;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -18,13 +17,19 @@ return Application::configure(basePath: dirname(__DIR__))
         channels: __DIR__.'/../routes/channels.php',
         health: '/up',
     )
-    ->withMiddleware(function (Middleware $middleware){
+    ->withMiddleware(function (Middleware $middleware) {
         $middleware->statefulApi();
+        $middleware->validateCsrfTokens(except: ['api/stripe/webhook']);
+
+        $middleware->api(append: [
+            CreateFreshApiToken::class,
+        ]);
         $middleware->alias([
             'admin-auth' => AdminAuth::class,
             'manager-auth' => ManagerAuth::class,
+            'scopes' => CheckToken::class,
+            'scope' => CheckTokenForAnyScope::class,
         ]);
-        $middleware->validateCsrfTokens(except: ['api/stripe/webhook']);
     })
     // ->withMiddleware(function (Middleware $middleware): void {
     //     $middleware->alias(['admin-auth' => AdminAuth::class]);

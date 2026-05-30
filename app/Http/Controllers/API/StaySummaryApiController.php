@@ -186,6 +186,7 @@ class StaySummaryApiController extends Controller
 
     public function removeFromStay(Request $request, $id)
     {
+        Log::channel('debug')->info('Deleting: ' . $id);
         $stay = session()->get('stay', []);
 
         if (isset($stay['items'][$id])) {

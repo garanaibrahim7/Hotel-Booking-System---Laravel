@@ -41,14 +41,21 @@ class BookingApiController extends Controller
 
             $statusLabel = 'Cancelled';
             if ($booking->status == 1) {
-                $statusLabel = $checkOut?->isPast() ? 'Stay Complete' : 'Confirmed';
+                if ($checkOut?->isPast() && $booking->arrival === null) {
+                    $statusLabel = 'Check in Pending';
+                } else {
+                    $statusLabel = $checkOut?->isPast() ? 'Stay Complete' : 'Confirmed';
+                }
             } elseif ($booking->status == 0) {
                 $statusLabel = 'Pending';
             } elseif ($booking->status == 3) {
                 $statusLabel = 'Processing';
+            } else {
+                $statusLabel = 'Failed/Cancelled/Refunded';
             }
 
             return [
+                'id' => $booking->id,
                 'reference_number' => $booking->reference_number,
                 'booking_date' => $booking->created_at->format('d M, Y'),
                 'room_summary' => $roomSummary,
@@ -73,6 +80,17 @@ class BookingApiController extends Controller
         });
 
         $message = $transformedBookings->isEmpty() ? "You didn't made any Bookings yet" : 'Bookings retrived Successfully';
+
+        return response()->json([
+            'bookings' => $transformedBookings,
+            'meta' => [
+                'total' => $bookings->total(),
+                'current_page' => $bookings->currentPage(),
+                'per_page' => $bookings->perPage(),
+                'last_page' => $bookings->lastPage(),
+            ],
+            'message' => $message,
+        ]);
 
         return $this->success([
             'bookings' => $transformedBookings,
@@ -417,8 +435,8 @@ class BookingApiController extends Controller
             'reference' => $booking->reference_number,
             'status' => [
                 'code' => $booking->status,
-                'label' => $this->getBookingStatusLabel($booking->status, $isPast),
-                'is_completed' => $isPast && $payment->status == 1,
+                'label' => $this->getBookingStatusLabel($booking->status, $isPast, $booking),
+                'is_completed' => $isPast && $payment->status && $booking->arrival == 1,
             ],
             'hotel' => [
                 'name' => $booking->hotel->name,
@@ -454,14 +472,22 @@ class BookingApiController extends Controller
                 'can_invoice' => $isPast && $payment->status == 1,
                 'can_review' => $isPast && $payment->status == 1 && ! $booking->review,
             ],
+            'download_invoice' => route('booking.download_invoice', $booking->reference_number),
         ];
     }
 
-    private function getBookingStatusLabel($status, $completed)
+    private function getBookingStatusLabel($status, $completed, $booking = null)
     {
+        if ($booking->status == 1) {
+            if ($completed && $booking->arrival === null) {
+                return 'Check in Pending';
+            } else {
+                return $completed ? 'Stay Complete' : 'Confirmed';
+            }
+        }
+
         return match ($status) {
             0 => 'Pending',
-            1 => $completed ? 'Stay Complete' : 'Confirmed',
             2 => 'Failed/Cancelled',
             3 => 'Processing',
             5 => 'Rejected',

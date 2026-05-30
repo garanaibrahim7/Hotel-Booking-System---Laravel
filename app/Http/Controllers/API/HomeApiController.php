@@ -55,7 +55,8 @@ class HomeApiController extends Controller
         ], 200);
     }
 
-    public function heroImage() {
+    public function heroImage()
+    {
         return response()->json([
             'success' => true,
             'data' => asset('/storage/assets/banner.jpg'),
@@ -141,5 +142,23 @@ class HomeApiController extends Controller
             'rooms' => $rooms,
             'cities' => $cities,
         ], 200);
+    }
+
+    public function getCities()
+    {
+        $cities = Cache::remember('formatted_cities', null, function () {
+            return City::get()->map(function ($city) {
+                return (object) [
+                    'id' => $city->id,
+                    'full_name' => "{$city->location_details->city} - {$city->location_details->state} ({$city->location_details->country})",
+                ];
+            });
+
+        });
+
+        return response()->json([
+            'cities' => $cities,
+            'success' => true,
+        ]);
     }
 }

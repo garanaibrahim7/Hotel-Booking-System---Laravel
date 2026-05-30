@@ -49,7 +49,12 @@ class RoomApiController extends Controller
 
         // Log::channel('debug')->info('Total : '.$paginatedHotels->total());
         $message = $paginatedHotels->isEmpty() ? 'No Rooms Found for the Request' : 'Rooms Fetched Successfully';
+        // Log::channel('debug')->info('Paginated Fetched Record: ', compact('paginatedHotels'));
+        // Log::channel('debug')->info('Total: '. $paginatedHotels->total() ?? 0);
 
+        // if($paginatedHotels->total() === 0){
+        //     $city =
+        // }
         return RoomExploreResource::collection($paginatedHotels)->additional([
             // 'meta' => [
             //     'total' => $paginatedHotels->total(),
@@ -57,7 +62,7 @@ class RoomApiController extends Controller
             //     'per_page' => $paginatedHotels->perPage(),
             //     'last_page' => $paginatedHotels->lastPage(),
             // ],
-            'selected' => $request->city_id ? $paginatedHotels->first()->hotel->city_name : $userCountry['country_name'],
+            'selected' => $request->city_id ? $paginatedHotels->first()?->hotel?->city_name : $userCountry['country_name'],
             'check_in' => $checkIn,
             'check_out' => $checkOut,
             'filters' => [
@@ -72,7 +77,7 @@ class RoomApiController extends Controller
                 'values' => [
                     'check_in' => $checkIn,
                     'check_out' => $checkOut,
-                ]
+                ],
             ],
         ])->response()->setStatusCode(200);
 

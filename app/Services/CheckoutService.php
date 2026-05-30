@@ -134,6 +134,12 @@ class CheckoutService
                 ];
             });
 
+            $isReactApp = (request()->wantsJson() || request()->is('api/*'));
+            $successUrl = $isReactApp ? env('FRONTEND_URL', 'http://localhost:5173').'/payment/success' : route('booking.success');
+            $cancelUrl = $isReactApp ? env('FRONTEND_URL', 'http://localhost:5173').'/payment/cancel' : route('booking.cancelPayment');
+
+            Log::channel('debug')->info('success: ' . $successUrl . 'cancel: '. $cancelUrl);
+
             $payload = [
                 'booking_id' => $booking->id,
                 'currency' => strtolower($userCountry['currency_code']),
@@ -146,8 +152,8 @@ class CheckoutService
                     'phone' => Auth::user()->phone,
                 ],
                 'discount_amount' => ($discountData['discount_amount'] ?? 0) * $exchangeRate ?? 0,
-                'success_url' => route('booking.success'),
-                'cancel_url' => route('booking.cancelPayment'),
+                'success_url' => $successUrl,
+                'cancel_url' => $cancelUrl,
 
                 // 'success_url' => request()->is('api/*') ? null : route('booking.success'),
                 // 'cancel_url' => request()->is('api/*') ? null : route('booking.cancelPayment'),

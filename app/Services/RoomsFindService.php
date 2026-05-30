@@ -25,6 +25,7 @@ class RoomsFindService
         if ($hotelId) {
             $query->where('hotel_id', $hotelId);
         } elseif ($cityId) {
+            // Log::channel('debug')->info('City Id Found: '.$cityId);
             $query->whereHas('hotel', fn ($q) => $q->where('city_id', $cityId));
         } else {
             $query->whereHas('hotel.city.state.country', fn ($q) => $q->where('name', $userLocation['country_name']));

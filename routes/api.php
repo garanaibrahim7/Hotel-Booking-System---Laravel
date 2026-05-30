@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::post('/stripe/webhook', [PaymentWebhookController::class, 'stripe']);
 
-Route::middleware('auth:sanctum')->group(function () {
+Route::middleware('auth:web')->group(function () {
 
     Route::get('/user', function (Request $request) {
         return response()->json([
@@ -73,6 +73,8 @@ Route::get('/home/special-offers', [HomeApiController::class, 'getSpecialOffers'
 Route::get('/home/featured-rooms', [HomeApiController::class, 'getFeaturedRooms']);
 Route::get('/home/search-cities', [HomeApiController::class, 'getSearchCities']);
 Route::get('/home/hotel-cities', [HomeApiController::class, 'getHotelCities']);
+
+Route::get('/cities', [HomeApiController::class, 'getCities']);
 
 Route::post('/session/save-text', function (Request $request) {
     session()->put('my_text', $request->input('message'));

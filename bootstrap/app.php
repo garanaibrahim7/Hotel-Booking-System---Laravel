@@ -21,7 +21,11 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->statefulApi();
         $middleware->validateCsrfTokens(except: ['api/stripe/webhook']);
 
-        $middleware->api(append: [
+        // $middleware->api(append: [
+        //     CreateFreshApiToken::class,
+        // ]);
+
+        $middleware->web(append: [
             CreateFreshApiToken::class,
         ]);
         $middleware->alias([

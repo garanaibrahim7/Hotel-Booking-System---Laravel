@@ -74,7 +74,7 @@ class PaymentService
                         'exchange_rate' => (float) $booking->payment->exchange_rate,
                         'type' => 'credit',
                         'mode' => $booking->payment->gateway,
-                        'note' => 'New Booking',
+                        'note' => 'Booking By '.$booking->user->name . ' for Hotel - ' . $booking->hotel->name,
                         'tax' => 0,
                         'tax_amount' => 0,
                     ]);

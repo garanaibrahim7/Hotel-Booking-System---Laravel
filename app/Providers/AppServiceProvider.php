@@ -3,9 +3,11 @@
 namespace App\Providers;
 
 use App\Contracts\PaymentProviderInterface;
+use App\Contracts\SubscriptionProviderInterface;
 use App\Models\Discount;
 use App\Observers\DiscountObserver;
 use App\Services\Payments\StripeProvider;
+use App\Services\Subscription\StripeSubscriptionProvider;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\Paginator;
@@ -27,6 +29,10 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(
             PaymentProviderInterface::class,
             StripeProvider::class
+        );
+        $this->app->bind(
+            SubscriptionProviderInterface::class,
+            StripeSubscriptionProvider::class
         );
     }
 

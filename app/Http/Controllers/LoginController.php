@@ -22,13 +22,10 @@ class LoginController extends Controller
             switch (Auth::user()->role) {
                 case 'admin':
                     return redirect()->intended(route('admin.dashboard'));
-                    break;
                 case 'manager':
                     return redirect()->intended(route('manager.dashboard'));
-                    break;
                 case 'customer':
                     return redirect()->intended('/');
-                    break;
                 default:
                     abort(401, 'Undefiened Role');
                     break;

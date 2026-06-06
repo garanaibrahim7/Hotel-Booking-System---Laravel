@@ -3,16 +3,27 @@
 use App\Http\Controllers\API\AuthController;
 use App\Http\Controllers\API\BookingApiController;
 use App\Http\Controllers\API\HomeApiController;
+use App\Http\Controllers\API\ProfileApiController;
 use App\Http\Controllers\API\RoomApiController;
 use App\Http\Controllers\API\StaySummaryApiController;
+use App\Http\Controllers\API\SubscriptionApiController;
 use App\Http\Controllers\PaymentWebhookController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Route;
 
 Route::post('/stripe/webhook', [PaymentWebhookController::class, 'stripe']);
+Route::get('/subscription/plans', [SubscriptionApiController::class, 'index']);
 
 Route::middleware('auth:web')->group(function () {
+
+    Route::get('/subscription/plans/{plan}/checkout', [SubscriptionApiController::class, 'planSummary']);
+    Route::post('/subscription/plans/subscribe', [SubscriptionApiController::class, 'planSubscribe']);
+    Route::get('/subscriptions/{historyId}/summary', [SubscriptionApiController::class, 'subscriptionDetails']);
+    Route::get('/current/plan', [SubscriptionApiController::class, 'currentPlan']);
+    Route::post('/subscription/cancel', [SubscriptionApiController::class, 'cancel']);
+    Route::get('/subscription/change-payment-method', [SubscriptionApiController::class, 'updatePaymentMethod']);
+    Route::get('/subscription/manage', [SubscriptionApiController::class, 'manageSubscription']);
 
     Route::get('/user', function (Request $request) {
         return response()->json([
@@ -20,6 +31,9 @@ Route::middleware('auth:web')->group(function () {
             'data' => $request->user(),
         ]);
     });
+
+    Route::get('/user/profile', [ProfileApiController::class, 'index']);
+
 
     Route::get('/booking/checkout', [BookingApiController::class, 'checkout']);
     Route::post('/book', [BookingApiController::class, 'store']);

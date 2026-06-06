@@ -14,6 +14,7 @@ use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\RoomBlockController;
 use App\Http\Controllers\RoomController;
 use App\Http\Controllers\RoomDetailsController;
+use App\Http\Controllers\SubscriptionController;
 use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\User\PasswordResetController;
 use App\Http\Controllers\User\UserBookingController;
@@ -53,16 +54,60 @@ Route::get('/trunc', function () {
     return 'Truncate Done...';
 });
 
+Route::get('/test-stripe-payload', function () {
+    // 1. Initialize Stripe Client using your secret key configuration
+    $stripe = new StripeClient(config('services.stripe.secret'));
+
+    try {
+        // 2. Prepare the combined nested payload structure matching your Stripe Dashboard form fields
+        $payload = [
+            'name' => 'Test Premium Gold Tier',
+            'description' => 'A temporary test package to analyze the return object structure.',
+            'default_price_data' => [
+                'unit_amount' => 49900,      // ₹499.00 or $499.00 (in lowest denominator/cents)
+                'currency' => 'usd',          // Must be lower-case three-letter ISO code
+                'recurring' => [
+                    'interval' => 'month',    // day, week, month, or year
+                    'interval_count' => 3,    // Bills every 3 months
+                ],
+            ],
+        ];
+
+        // 3. Fire the request using Stripe's product endpoint
+        $stripeProductResponse = $stripe->products->create($payload);
+
+        // 4. Clean up and structure the vital tracking tokens returned by the server
+        $debugOutput = [
+            'instruction' => 'Analyze the fields below to see where IDs are stored.',
+            'stripe_product_id' => $stripeProductResponse->id, // Looks like: prod_R1x8XYZ...
+
+            // 🚀 THIS IS THE IMPORTANT TOKEN: This is what you save to your migration schema table!
+            'stripe_price_id' => $stripeProductResponse->default_price, // Looks like: price_1XYZ...
+
+            'raw_full_response_object' => $stripeProductResponse->toArray()
+        ];
+
+        // Return a clean JSON preview directly to your browser tab
+        return [
+            'success' => true,
+            'message' => 'Stripe successfully parsed your nested single-request payload!',
+            'summary_tokens' => $debugOutput,
+            'stripeProductResponse' => $stripeProductResponse
+        ];
+
+    } catch (\Exception $e) {
+        return response()->json([
+            'success' => false,
+            'error_message' => $e->getMessage(),
+            'hint' => 'Ensure your STRIPE_SECRET is configured properly inside your .env configuration file.'
+        ], 500);
+    }
+});
+
 Route::get('/test/{intent}', function ($intent) {
 
-    $booking = Booking::find($intent);
-
-    if (! $booking) {
-        return 'Error: Please pass a valid existing booking ID in the URL! Example: /api/test-websocket-trigger/1';
-    }
-
-    event(new BroadcastBookingStatus($booking, true, '🚀 Success! Broadcast fired Again into channel: booking-tracker.'.$intent));
-
+    $stripeObj = new StripeClient(config('services.stripe.secret'));
+    return $stripeObj->checkout->sessions->retrieve($intent);
     return '🚀 Success! Broadcast fired into channel: booking-tracker.'.$intent;
 
 })->name('test');
@@ -123,6 +168,7 @@ Route::prefix('admin')
         Route::resource('bookings', BookingController::class);
         Route::resource('reviews', ReviewController::class);
         Route::resource('users', UserController::class);
+        Route::resource('subscription', SubscriptionController::class);
 
         Route::get('room/{id}/add-block', [RoomBlockController::class, 'createBlock'])->name('rooms.add-block');
         Route::post('room/add-block', [RoomBlockController::class, 'storeBlock'])->name('rooms.store-block');

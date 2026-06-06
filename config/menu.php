@@ -137,6 +137,12 @@ return [
                 'fill-icon' => 'bi bi-list-columns-reverse',
                 'link' => 'admin.transactions',
             ],
+            [
+                'title' => 'Subscription Plans',
+                'icon' => 'bi bi-bell',
+                'fill-icon' => 'bi bi-bell-fill',
+                'link' => 'admin.subscription.index',
+            ],
         ],
     ],
     'manager' => [

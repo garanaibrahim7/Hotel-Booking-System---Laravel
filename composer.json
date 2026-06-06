@@ -11,13 +11,14 @@
     "require": {
         "php": "^8.2",
         "barryvdh/laravel-dompdf": "^3.1",
+        "laravel/cashier": "^16.5",
         "laravel/framework": "^12.0",
         "laravel/passport": "^13.7",
         "laravel/reverb": "^1.0",
         "laravel/sanctum": "^4.0",
         "laravel/tinker": "^2.10.1",
         "razorpay/razorpay": "^2.9",
-        "stripe/stripe-php": "^20.0",
+        "stripe/stripe-php": "^17.3",
         "usmanhalalit/laracsv": "^2.1"
     },
     "require-dev": {

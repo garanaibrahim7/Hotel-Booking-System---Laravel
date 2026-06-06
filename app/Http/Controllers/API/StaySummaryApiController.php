@@ -29,7 +29,7 @@ class StaySummaryApiController extends Controller
             ], 200);
         }
 
-        Log::channel('debug')->info('Stay Details : ', ['stay' => $stay]);
+        // Log::channel('debug')->info('Stay Details : ', ['stay' => $stay]);
 
         $checkIn = session('booking_check_in');
         $checkOut = session('booking_check_out');
@@ -81,7 +81,7 @@ class StaySummaryApiController extends Controller
 
         // Log::channel('debug')->info('Request : ', Cookie::get());
         // Log::channel('debug')->info('Rooms To Stay : ', $stay);
-        Log::channel('debug')->info('Sending rooms Count : '.(isset($stay['items']) ? count($stay['items']) : 0));
+        // Log::channel('debug')->info('Sending rooms Count : '.(isset($stay['items']) ? count($stay['items']) : 0));
 
         return response()->json([
             'success' => true,
@@ -139,7 +139,7 @@ class StaySummaryApiController extends Controller
             'currency_symbol' => $userCountry['currency_symbol'],
         ]);
 
-        Log::channel('debug')->info('Stay Details : ', ['stay' => $stay]);
+        // Log::channel('debug')->info('Stay Details : ', ['stay' => $stay]);
 
         if ($stay['hotel_id'] != $hotel->id) {
             return response()->json([
@@ -186,7 +186,7 @@ class StaySummaryApiController extends Controller
 
     public function removeFromStay(Request $request, $id)
     {
-        Log::channel('debug')->info('Deleting: ' . $id);
+        // Log::channel('debug')->info('Deleting: ' . $id);
         $stay = session()->get('stay', []);
 
         if (isset($stay['items'][$id])) {

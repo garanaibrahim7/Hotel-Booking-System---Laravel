@@ -231,7 +231,8 @@
                         <h6 class="fw-bold text-uppercase small text-muted mb-4">Reserved Rooms</h6>
 
                         @foreach ($booking->items as $item)
-                            <div class="p-3 border rounded-3 mb-3 bg-light-hover transition-all">
+                            <div class="p-3 border rounded-3 mb-3 bg-light-hover transition-all" style="cursor: pointer;"
+                                onclick="viewRoom('{{ route('admin.rooms.index', ['room_detail_id' => $item->room->details->id]) }}')">
                                 <div class="row align-items-center">
                                     <div class="col-md-2">
                                         <img src="/storage/{{ $item->room->details->images->first()->path ?? '' }}"
@@ -254,7 +255,9 @@
                                     </div>
                                     <div class="col-md-2 text-end">
                                         <div class="fw-bold text-dark">{{ number_format($item->room->details->price, 2) }}
-                                            {{ $booking->currency }}</div>
+                                            {{ $booking->currency }}
+                                        </div>
+                                        <small>per night</small>
                                     </div>
                                 </div>
                             </div>
@@ -325,6 +328,12 @@
 
             let modal = bootstrap.Modal.getInstance(modalEl) || new bootstrap.Modal(modalEl);
             modal.show();
+        }
+
+        function viewRoom(link){
+            console.log(link);
+
+            window.location.href = link;
         }
     </script>
 @endpush

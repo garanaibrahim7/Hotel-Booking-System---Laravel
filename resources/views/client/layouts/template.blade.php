@@ -117,6 +117,7 @@
             modal.show();
         }
     </script>
+    @include('client.partials.chatbot')
     @stack('scripts')
 </body>
 

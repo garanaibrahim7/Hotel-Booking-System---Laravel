@@ -22,6 +22,7 @@ use App\Http\Controllers\User\UserHotelController;
 use App\Http\Controllers\User\UserProfileController;
 use App\Http\Controllers\User\UserRoomController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\ChatbotController;
 use App\Models\Booking;
 use App\Models\City;
 use Illuminate\Support\Facades\Auth;
@@ -285,3 +286,6 @@ Route::get('/cities', function () {
 
     return $cities->toJson();
 })->name('cities');
+
+Route::post('/chatbot/message', [ChatbotController::class, 'handle'])->name('chatbot.message');
+

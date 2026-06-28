@@ -63,4 +63,10 @@ class Hotel extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    public function getCoverImageAttribute(): string
+    {
+        $image = $this->images->first();
+        return $image ? $image->url : asset('storage/hotel_placeholder.jpg');
+    }
 }

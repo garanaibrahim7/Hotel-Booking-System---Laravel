@@ -3,7 +3,7 @@
         onclick="handleCardClick(event, '{{ route('client.room.details', $room->id) }}')" style="cursor: pointer;">
         <div class="row g-0 align-items-start">
             <div class="col-md-4">
-                <img src="{{ !empty($room->images) && $room->images->first() ? asset('/storage/' . $room->images->first()->path) : asset('images/placeholder.jpg') }}"
+                <img src="{{ $room->cover_image }}"
                     class="img-fluid object-fit-cover" style="height: 220px; width: 100%;">
             </div>
 

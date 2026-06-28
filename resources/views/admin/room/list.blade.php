@@ -8,9 +8,9 @@
         @if ($rooms->count() > 0)
             <div class="card border-0 shadow-sm mb-4" style="border-radius: 15px; overflow: hidden;">
                 <div class="row g-0">
-                    <div class="col-md-3">
-                        <img src="/storage/{{ $details->images->first()->path }}" class="img-fluid h-100"
-                            style="object-fit: cover; min-height: 150px;" alt="Room Category">
+                    <div class="col-md-3 p-0">
+                        <img src="{{ asset('storage/' . ($details->images->first()->path ?? 'default.jpg')) }}" class="img-fluid h-100"
+                            style="object-fit: cover; min-height: 200px; width:100%" alt="Room Image">
                     </div>
                     <div class="col-md-9">
                         <div class="card-body d-flex justify-content-between align-items-center h-100 px-4">

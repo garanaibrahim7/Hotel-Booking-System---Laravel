@@ -12,8 +12,8 @@
                                 @php
                                     $avatar =
                                         $user->profile && $user->profile->pic
-                                            ? asset('/storage/' . $user->profile->pic->path)
-                                            : asset('/storage/assets/profile_pic_default.png');
+                                            ? asset('storage/' . $user->profile->pic->path)
+                                            : asset('storage/assets/profile_pic_default.png');
                                 @endphp
                                 <img src="{{ $avatar }}" class="img-fluid border p-1 rounded-pill"
                                     style="width: 160px; height: 160px; object-fit: cover; border-color: #bca47f !important;">

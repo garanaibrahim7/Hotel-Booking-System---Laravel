@@ -22,4 +22,15 @@ class Image extends Model
     {
         return $this->morphTo();
     }
+
+    public function getUrlAttribute(): string
+    {
+        if ($this->path && file_exists(public_path('storage/' . $this->path))) {
+            return asset('storage/' . $this->path);
+        }
+
+        return $this->imageable_type === Hotel::class 
+            ? asset('storage/hotel_placeholder.jpg') 
+            : asset('storage/room_placeholder.jpeg');
+    }
 }

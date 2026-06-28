@@ -93,47 +93,85 @@
                                         $textColor = '#28a745';
                                         $label = 'Confirmed';
                                         break;
-
                                     case 0:
                                         $color = '#fff3cd';
                                         $textColor = '#856404';
                                         $label = 'Pending';
                                         break;
-
                                     case 2:
                                         $color = '#ffe5e5';
                                         $textColor = '#d9534f';
                                         $label = 'Failed';
                                         break;
-
                                     case 3:
                                         $color = '#e2f0ff';
                                         $textColor = '#0d6efd';
                                         $label = 'Processing';
                                         break;
-
                                     case 4:
                                         $color = '#f8d7da';
                                         $textColor = '#842029';
                                         $label = 'Cancelled';
                                         break;
-
                                     case 5:
                                         $color = '#f8d7da';
                                         $textColor = '#842029';
                                         $label = 'Rejected';
                                         break;
-
                                     default:
                                         $color = '#f0f0f0';
                                         $textColor = '#6c757d';
                                         $label = 'Unknown';
                                 }
+
+                                $paymentStatus = $item->booking->payment->status ?? null;
+                                switch ($paymentStatus) {
+                                    case 1:
+                                        $pColor = '#e8fadf';
+                                        $pTextColor = '#28a745';
+                                        $pLabel = 'Paid';
+                                        break;
+                                    case 0:
+                                        $pColor = '#fff3cd';
+                                        $pTextColor = '#856404';
+                                        $pLabel = 'Pay Pending';
+                                        break;
+                                    case 2:
+                                        $pColor = '#ffe5e5';
+                                        $pTextColor = '#d9534f';
+                                        $pLabel = 'Pay Failed';
+                                        break;
+                                    case 3:
+                                        $pColor = '#e2f0ff';
+                                        $pTextColor = '#0d6efd';
+                                        $pLabel = 'Pay Processing';
+                                        break;
+                                    case 4:
+                                        $pColor = '#f8d7da';
+                                        $pTextColor = '#842029';
+                                        $pLabel = 'Pay Cancelled';
+                                        break;
+                                    case 6:
+                                        $pColor = '#f0f0f0';
+                                        $pTextColor = '#6c757d';
+                                        $pLabel = 'Refunded';
+                                        break;
+                                    default:
+                                        $pColor = '#f0f0f0';
+                                        $pTextColor = '#6c757d';
+                                        $pLabel = 'Unpaid';
+                                }
                             @endphp
-                            <span class="badge rounded-pill px-3 py-2"
-                                style="background-color: {{ $color }}; color: {{ $textColor }}; font-size: 0.7rem;">
-                                {{ $label }}
-                            </span>
+                            <div class="d-flex flex-column gap-1 align-items-center">
+                                <span class="badge rounded-pill px-3 py-1"
+                                    style="background-color: {{ $color }}; color: {{ $textColor }}; font-size: 0.65rem;">
+                                    Booking: {{ $label }}
+                                </span>
+                                <span class="badge rounded-pill px-3 py-1"
+                                    style="background-color: {{ $pColor }}; color: {{ $pTextColor }}; font-size: 0.65rem;">
+                                    {{ $pLabel }}
+                                </span>
+                            </div>
                         </td>
 
                         {{-- Pricing --}}

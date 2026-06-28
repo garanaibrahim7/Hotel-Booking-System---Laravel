@@ -58,7 +58,7 @@
                                         <div class="d-flex align-items-center">
                                             <div class="me-3 position-relative">
                                                 @if ($category->images->isNotEmpty())
-                                                    <img src="/storage/{{ $category->images->first()->path }}"
+                                                    <img src="{{ asset('storage/' . $category->images->first()->path) }}"
                                                         class="rounded-3 shadow-sm"
                                                         style="width: 80px; height: 60px; object-fit: cover;">
                                                     @if ($category->images->count() > 1)

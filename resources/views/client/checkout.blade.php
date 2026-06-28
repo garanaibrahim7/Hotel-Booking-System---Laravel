@@ -105,8 +105,9 @@
                             $calculatedSubtotal += $roomTotal;
                         @endphp
                         <div class="d-flex align-items-center mb-3">
-                            <img src="{{ asset('/storage/' . $room['path']) }}"
-                                style="width: 50px; height: 50px; object-fit: cover;" class="me-3 border">
+                            <img src="{{ asset('storage/' . $room['path']) }}"
+                                class="img-fluid rounded-3 shadow-sm border me-3"
+                                style="height: 60px; width: 60px; object-fit: cover;">
                             <div class="flex-grow-1">
                                 <span class="small text-uppercase fw-bold d-block">{{ $room['title'] }}</span>
                                 <small class="text-muted uppercase" style="font-size: 9px;">

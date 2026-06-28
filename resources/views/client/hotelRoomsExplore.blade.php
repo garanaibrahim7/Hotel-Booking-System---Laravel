@@ -32,7 +32,7 @@
                             </div>
                         </div>
                         <div class="text-end d-none d-md-block">
-                            @if ($offer->message)
+                            @if ($offer && isset($offer->message))
                                 <span class="badge rounded-0 bg-danger px-3 py-2 text-uppercase"
                                     style="letter-spacing: 1px;">% {{ $offer->message }}</span>
                             @else
@@ -70,7 +70,7 @@
                     <div class="carousel-inner h-100">
                         @foreach ($hotel->images as $index => $img)
                             <div class="carousel-item {{ $index == 0 ? 'active' : '' }} h-100">
-                                <img src="{{ asset('storage/' . $img->path) }}" class="d-block w-100 object-fit-cover"
+                                <img src="{{ $img->url }}" class="d-block w-100 object-fit-cover"
                                     style="height: 450px;" alt="Hotel Image">
                             </div>
                         @endforeach
@@ -87,14 +87,14 @@
             </div>
             <div class="col-md-4 d-none d-md-flex flex-column gap-2">
                 {{-- {{ $rooms->count() }} --}}
-                @foreach ($rooms->skip(rand(0, $rooms->count() - 2))->take(2) as $room)
-                    <img src="{{ asset('storage/' . $room->images->first()->path) }}"
+                @foreach ($rooms->skip(rand(0, max($rooms->count() - 2, 0)))->take(2) as $room)
+                    <img src="{{ $room->cover_image }}"
                         class="img-fluid w-100 object-fit-cover" style="height: 221px;">
                 @endforeach
             </div>
         </div>
 
-        @if ($offer)
+        @if ($offer && isset($offer->type) && isset($offer->value) && isset($offer->message))
             <div class="alert border-0 p-4 d-flex align-items-center justify-content-between shadow-sm my-4"
                 style="background-color: #fff9e6; border-left: 5px solid #bca47f !important; border-radius: 0;">
                 <div class="d-flex align-items-center">

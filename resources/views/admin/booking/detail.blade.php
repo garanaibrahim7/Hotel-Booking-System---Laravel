@@ -55,12 +55,56 @@
                                 $textColor = '#6c757d';
                                 $label = 'Unknown';
                         }
+                        
+                        $paymentStatus = $booking->payment->status ?? null;
+                        switch ($paymentStatus) {
+                            case 1:
+                                $pColor = '#e8fadf';
+                                $pTextColor = '#28a745';
+                                $pLabel = 'Paid';
+                                break;
+                            case 0:
+                                $pColor = '#fff3cd';
+                                $pTextColor = '#856404';
+                                $pLabel = 'Pay Pending';
+                                break;
+                            case 2:
+                                $pColor = '#ffe5e5';
+                                $pTextColor = '#d9534f';
+                                $pLabel = 'Pay Failed';
+                                break;
+                            case 3:
+                                $pColor = '#e2f0ff';
+                                $pTextColor = '#0d6efd';
+                                $pLabel = 'Pay Processing';
+                                break;
+                            case 4:
+                                $pColor = '#f8d7da';
+                                $pTextColor = '#842029';
+                                $pLabel = 'Pay Cancelled';
+                                break;
+                            case 6:
+                                $pColor = '#f0f0f0';
+                                $pTextColor = '#6c757d';
+                                $pLabel = 'Refunded';
+                                break;
+                            default:
+                                $pColor = '#f0f0f0';
+                                $pTextColor = '#6c757d';
+                                $pLabel = 'Unpaid';
+                        }
                     @endphp
 
-                    <span class="badge rounded-pill px-3 py-1 mt-1"
-                        style="background-color: {{ $color }}; color: {{ $textColor }};">
-                        {{ $label }}
-                    </span>
+                    <div class="d-flex gap-2 align-items-center mt-1">
+                        <span class="badge rounded-pill px-3 py-1"
+                            style="background-color: {{ $color }}; color: {{ $textColor }};">
+                            Booking: {{ $label }}
+                        </span>
+                        <span class="badge rounded-pill px-3 py-1"
+                            style="background-color: {{ $pColor }}; color: {{ $pTextColor }};">
+                            Payment: {{ $pLabel }}
+                        </span>
+                    </div>
                 </div>
             </div>
 
@@ -235,7 +279,7 @@
                                 onclick="viewRoom('{{ route('admin.rooms.index', ['room_detail_id' => $item->room->details->id]) }}')">
                                 <div class="row align-items-center">
                                     <div class="col-md-2">
-                                        <img src="/storage/{{ $item->room->details->images->first()->path ?? '' }}"
+                                        <img src="{{ asset('storage/' . ($item->room->details->images->first()->path ?? 'default.jpg')) }}"
                                             class="img-fluid rounded-3 shadow-sm"
                                             style="height: 60px; width: 100%; object-fit: cover;">
                                     </div>

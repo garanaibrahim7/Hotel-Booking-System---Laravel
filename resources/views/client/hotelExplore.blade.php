@@ -120,7 +120,7 @@
 
                             <div class="row g-0">
                                 <div class="col-md-4">
-                                    <img src="{{ asset('storage/' . ($hotel->images->first()->path ?? 'placeholders/hotel.jpg')) }}"
+                                    <img src="{{ $hotel->cover_image }}"
                                         class="img-fluid h-100 object-fit-cover" alt="{{ $hotel->name }}"
                                         style="min-height: 250px;">
                                 </div>

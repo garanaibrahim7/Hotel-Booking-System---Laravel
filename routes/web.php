@@ -285,3 +285,14 @@ Route::get('/cities', function () {
 
     return $cities->toJson();
 })->name('cities');
+
+// React Frontend Fallback Route
+// This route catches all requests that do not match any defined API or Admin routes
+// and serves the compiled React index.html.
+Route::get('/{any}', function () {
+    $path = public_path('client/index.html');
+    if (file_exists($path)) {
+        return file_get_contents($path);
+    }
+    abort(404, 'React Frontend Build Not Found');
+})->where('any', '.*');

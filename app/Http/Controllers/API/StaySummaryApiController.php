@@ -166,7 +166,7 @@ class StaySummaryApiController extends Controller
                 'price' => $room->price,
                 'converted_price' => $room->price * $exchangeRate,
                 'quantity' => 1,
-                'image' => $room->images->first()->path ?? 'default.jpg',
+                'image' => $room->cover_image,
             ];
         }
 

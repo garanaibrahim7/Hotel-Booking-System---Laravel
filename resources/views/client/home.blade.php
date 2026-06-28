@@ -54,7 +54,7 @@
                                         @endif
 
                                         <div class="ratio ratio-4x3 overflow-hidden">
-                                            <img src="{{ $room->images->first() ? asset('storage/' . $room->images->first()->path) : asset('images/placeholder.jpg') }}"
+                                            <img src="{{ $room->cover_image }}"
                                                 class="card-img-top object-fit-cover transition-zoom w-100 h-100"
                                                 alt="{{ $room->title }}">
                                         </div>
@@ -189,7 +189,7 @@
                                     @endif --}}
 
                                     <div class="ratio ratio-4x3 overflow-hidden">
-                                        <img src="{{ $room->images->first() ? asset('storage/' . $room->images->first()->path) : asset('images/placeholder.jpg') }}"
+                                        <img src="{{ $room->cover_image }}"
                                             class="card-img-top object-fit-cover transition-zoom"
                                             alt="{{ $room->title }}">
                                     </div>
@@ -235,7 +235,7 @@
                         {{-- <div class="swiper-slide h-auto">
                             <div class="roomcard border-0 shadow-sm h-100 mx-2">
                                 <div class="ratio ratio-4x3 overflow-hidden">
-                                    <img src="{{ $room->images->first() ? asset('storage/' . $room->images->first()->path) : asset('images/placeholder.jpg') }}"
+                                    <img src="{{ $room->cover_image }}"
                                         class="card-img-top object-fit-cover" alt="{{ $room->name }}">
                                 </div>
 

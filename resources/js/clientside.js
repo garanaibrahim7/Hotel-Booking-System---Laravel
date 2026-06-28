@@ -126,4 +126,10 @@ document.addEventListener('DOMContentLoaded', function () {
     // document.getElementById('dateEditTrigger').addEventListener('click', () => {
     //     fp.open();
     // });
+    
+    // Initialize Flatpickr on all date inputs globally
+    flatpickr("input[type=date]", {
+        dateFormat: "Y-m-d",
+        allowInput: true
+    });
 });

@@ -43,7 +43,7 @@
                         <div class="card border-0 shadow-sm mb-4 overflow-hidden" style="border-radius: 0; height: 200px">
                             <div class="row g-0 h-100">
                                 <div class="col-md-3">
-                                    <img src="{{ asset('storage/' . ($details['image'] ?? 'placeholder.jpg')) }}"
+                                    <img src="{{ $details['image'] ?? asset('storage/room_placeholder.jpeg') }}"
                                         class="img-fluid object-fit-cover w-100 h-100">
                                 </div>
                                 <div class="col-md-9 p-4">

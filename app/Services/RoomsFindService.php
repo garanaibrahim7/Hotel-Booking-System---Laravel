@@ -144,11 +144,8 @@ class RoomsFindService
                     'coupon_code' => $applicableDiscount?->coupen_code ?? null,
                     'offer_type' => $discountType,
                     'user_currency_symbol' => $userLocation['currency_symbol'],
-                    'images' => $room->images->map(function ($image) {
-                        $image->path = url('/').'/storage/'.$image->path;
-
-                        return $image;
-                    }),
+                    'cover_image' => $room->cover_image,
+                    'images' => $room->images->map(fn ($img) => (object) ['id' => $img->id, 'path' => $img->url]),
                     'hotel_id' => $room->hotel_id,
                 ];
             });
@@ -314,7 +311,8 @@ class RoomsFindService
                     'coupon_code' => $applicableDiscount?->coupen_code ?? null,
                     'offer_type' => $discountType,
                     'user_currency_symbol' => $userLocation['currency_symbol'],
-                    'images' => $room->images,
+                    'cover_image' => $room->cover_image,
+                    'images' => $room->images->map(fn ($img) => (object) ['id' => $img->id, 'path' => $img->url]),
                     'hotel_id' => $room->hotel_id,
                 ];
             });

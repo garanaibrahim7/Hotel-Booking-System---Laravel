@@ -55,4 +55,10 @@ class RoomDetail extends Model
     {
         return $this->hasMany(RoomBlock::class);
     }
+
+    public function getCoverImageAttribute(): string
+    {
+        $image = $this->images->first();
+        return $image ? $image->url : asset('storage/room_placeholder.jpeg');
+    }
 }

@@ -1,0 +1,165 @@
+services:
+  # Main Laravel + React Web Service
+  - type: web
+    name: hotel-booking-web
+    runtime: php
+    plan: free
+    buildCommand: "./bin/render-build.sh"
+    # Render's native PHP uses Apache by default and serves from /public
+    envVars:
+      - key: APP_ENV
+        value: production
+      - key: APP_DEBUG
+        value: false
+      - key: APP_KEY
+        generateValue: true
+      - key: APP_URL
+        value: "https://hotel-booking-web.onrender.com"
+      - key: VITE_API_URL
+        value: "https://hotel-booking-web.onrender.com/api/"
+      # Database connection (Swap to mysql if using external DB)
+      - key: DB_CONNECTION
+        value: pgsql
+      - key: DB_HOST
+        fromDatabase:
+          name: hotel-booking-db
+          property: host
+      - key: DB_PORT
+        fromDatabase:
+          name: hotel-booking-db
+          property: port
+      - key: DB_DATABASE
+        fromDatabase:
+          name: hotel-booking-db
+          property: database
+      - key: DB_USERNAME
+        fromDatabase:
+          name: hotel-booking-db
+          property: user
+      - key: DB_PASSWORD
+        fromDatabase:
+          name: hotel-booking-db
+          property: password
+      # Session & Security
+      - key: SESSION_SECURE_COOKIE
+        value: true
+      - key: SESSION_DOMAIN
+        value: ".onrender.com"
+      - key: SANCTUM_STATEFUL_DOMAINS
+        value: "hotel-booking-web.onrender.com"
+    disk:
+      name: storage-uploads
+      mountPath: /var/www/html/storage/app/public
+      sizeGB: 1
+
+  # WebSocket Server (Laravel Reverb)
+  - type: web
+    name: hotel-booking-reverb
+    runtime: php
+    plan: free
+    buildCommand: "composer install --no-dev --optimize-autoloader"
+    startCommand: "php artisan reverb:start --host=0.0.0.0 --port=$PORT"
+    envVars:
+      - key: REVERB_APP_ID
+        value: "169787"
+      - key: REVERB_APP_KEY
+        value: "9pxgjjpwyeogrtqvfldt"
+      - key: REVERB_APP_SECRET
+        value: "gytzvdw6dgis2yc1hsa8"
+      - key: REVERB_HOST
+        value: "hotel-booking-reverb.onrender.com"
+      - key: REVERB_PORT
+        value: "443"
+      - key: REVERB_SCHEME
+        value: "https"
+      # Requires same DB as web to authenticate users via channels
+      - key: DB_CONNECTION
+        value: pgsql
+      - key: DB_HOST
+        fromDatabase:
+          name: hotel-booking-db
+          property: host
+      - key: DB_PORT
+        fromDatabase:
+          name: hotel-booking-db
+          property: port
+      - key: DB_DATABASE
+        fromDatabase:
+          name: hotel-booking-db
+          property: database
+      - key: DB_USERNAME
+        fromDatabase:
+          name: hotel-booking-db
+          property: user
+      - key: DB_PASSWORD
+        fromDatabase:
+          name: hotel-booking-db
+          property: password
+
+  # Background Queue Worker
+  - type: worker
+    name: hotel-booking-queue
+    runtime: php
+    plan: free
+    buildCommand: "composer install --no-dev --optimize-autoloader"
+    startCommand: "php artisan queue:work --sleep=3 --tries=3"
+    envVars:
+      - key: DB_CONNECTION
+        value: pgsql
+      - key: DB_HOST
+        fromDatabase:
+          name: hotel-booking-db
+          property: host
+      - key: DB_PORT
+        fromDatabase:
+          name: hotel-booking-db
+          property: port
+      - key: DB_DATABASE
+        fromDatabase:
+          name: hotel-booking-db
+          property: database
+      - key: DB_USERNAME
+        fromDatabase:
+          name: hotel-booking-db
+          property: user
+      - key: DB_PASSWORD
+        fromDatabase:
+          name: hotel-booking-db
+          property: password
+
+  # Scheduled Tasks (Cron)
+  - type: cron
+    name: hotel-booking-schedule
+    runtime: php
+    schedule: "* * * * *"
+    buildCommand: "composer install --no-dev --optimize-autoloader"
+    startCommand: "php artisan schedule:run"
+    envVars:
+      - key: DB_CONNECTION
+        value: pgsql
+      - key: DB_HOST
+        fromDatabase:
+          name: hotel-booking-db
+          property: host
+      - key: DB_PORT
+        fromDatabase:
+          name: hotel-booking-db
+          property: port
+      - key: DB_DATABASE
+        fromDatabase:
+          name: hotel-booking-db
+          property: database
+      - key: DB_USERNAME
+        fromDatabase:
+          name: hotel-booking-db
+          property: user
+      - key: DB_PASSWORD
+        fromDatabase:
+          name: hotel-booking-db
+          property: password
+
+databases:
+  - name: hotel-booking-db
+    databaseName: hotelbooking
+    user: hoteluser
+    plan: free

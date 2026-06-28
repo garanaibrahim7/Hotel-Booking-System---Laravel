@@ -49,10 +49,15 @@ class RoomExploreResource extends JsonResource
                 'offer_type' => $room->offer_type,
                 'user_currency_symbol' => $room->user_currency_symbol,
                 'hotel_id' => $room->hotel_id,
-                'images' => $room->images->map(fn ($image) => [
+                'images' => $room->images->isNotEmpty() ? $room->images->map(fn ($image) => [
                     'id' => $image->id,
-                    'path' => $image->path,
-                ]),
+                    'path' => $image->path ?? $image->url ?? asset('storage/' . $image->path),
+                ]) : [
+                    [
+                        'id' => null,
+                        'path' => asset('storage/room_placeholder.jpeg'),
+                    ]
+                ],
             ]),
             'offer' => $this->offer ?[
                 'id' => $this->offer->id,
